@@ -1,0 +1,28 @@
+RAMÉ SUSHI SMART - PAQUETE DE UNA SOLA SUBIDA A VERCEL
+
+ESTADO: aplicación de pruebas conectada al proyecto Supabase independiente.
+No activar pedidos reales sin completar el alta de usuarios, catálogo y pruebas de impresión.
+
+OPCIÓN A: GitHub -> Vercel
+1. Descomprime este ZIP en tu PC. Crea un repositorio PRIVADO en GitHub.
+2. Sube el CONTENIDO de esta carpeta a la raíz del repositorio. Nunca subas print-agent/.env.
+3. En https://vercel.com/new importa el repositorio.
+4. Framework Preset: Vite; Root Directory: ./; Build Command: npm run build; Output Directory: dist.
+5. La URL y la clave PUBLICABLE de Supabase ya están en .env.production; no necesitas escribirlas.
+6. Pulsa Deploy. Después, las actualizaciones se harán con cambios en el mismo repositorio.
+
+OPCIÓN B: Vercel CLI (si sabes usar terminal)
+1. Instala Node.js LTS y Vercel CLI; descomprime este ZIP.
+2. Dentro de la carpeta: npm install && npm run build
+3. Ejecuta: vercel login; vercel --prod
+
+IMPORTANTE: el programa de impresión en print-agent/ se instala SOLO en el computador Windows 10 de caja; no se ejecuta en Vercel.
+Se configura su .env con clave de servicio únicamente en el computador de caja, nunca en la web.
+El despliegue web NO activa automáticamente WhatsApp Business, impresión ni carga de productos.
+
+ANTES DE OPERAR:
+- Crear usuarios Auth en Supabase y asignar roles en public.profiles.
+- Cargar categorías, productos y precios reales, opciones y tramos de reparto.
+- Probar el flujo de pedidos, cobro y cierre de caja en distintos dispositivos.
+- Instalar y probar la impresora USB POS-H806 con el programa local.
+- Auditar políticas RLS y el acceso al agente local antes de uso comercial.

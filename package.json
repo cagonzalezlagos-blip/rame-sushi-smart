@@ -1,0 +1,1 @@
+{"name":"rame-print-agent","version":"0.1.0","private":true,"type":"module","scripts":{"start":"node agent.js"},"dependencies":{"@supabase/supabase-js":"^2.57.0","dotenv":"^17.2.0"}}
