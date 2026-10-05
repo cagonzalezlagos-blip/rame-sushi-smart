@@ -44,7 +44,7 @@ export function withBusinessSettings(base, settings = {}) {
 
 export function routesForRole(role, features) {
   const staff = ['Caja', 'Pedidos', ...(features.customers ? ['Clientes'] : []), ...(features.cash ? ['Cierre'] : []), 'Disponibilidad'];
-  if (role === 'owner') return ['Resumen', ...staff, 'Proveedores', 'Personal', ...(features.delivery ? ['Repartidores'] : []), 'Configuración', ...(features.attendance ? ['Asistencia'] : [])];
+  if (role === 'owner') return ['Resumen', 'Carta', ...staff, 'Proveedores', 'Personal', ...(features.delivery ? ['Repartidores'] : []), 'Configuración', ...(features.attendance ? ['Asistencia'] : [])];
   if (role === 'cashier') return [...staff, 'Personal', ...(features.attendance ? ['Asistencia'] : [])];
   if (role === 'courier') return [...(features.delivery ? ['Repartos'] : []), ...(features.attendance ? ['Asistencia'] : [])];
   return features.attendance ? ['Asistencia'] : [];

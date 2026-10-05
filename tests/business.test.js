@@ -7,7 +7,7 @@ test('two businesses use the same code with independent branding and features',(
   const cafe=withBusinessSettings(businessFromEnvironment({VITE_BUSINESS_NAME:'Café Plaza',VITE_BUSINESS_FEATURES:'pickup,cash,customers',VITE_BUSINESS_ACCENT_COLOR:'#6d442e'}),{business_name:'Café Plaza'});
   assert.equal(sushi.name,'Ramé Sushi');assert.equal(cafe.name,'Café Plaza');
   assert.deepEqual(routesForRole('courier',cafe.features),[]);
-  assert.deepEqual(routesForRole('owner',cafe.features),['Resumen','Caja','Pedidos','Clientes','Cierre','Disponibilidad','Proveedores','Personal','Configuración']);
+  assert.deepEqual(routesForRole('owner',cafe.features),['Resumen','Carta','Caja','Pedidos','Clientes','Cierre','Disponibilidad','Proveedores','Personal','Configuración']);
   assert.ok(routesForRole('cashier',cafe.features).includes('Personal'));
   assert.ok(routesForRole('courier',sushi.features).includes('Repartos'));
 });

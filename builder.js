@@ -1,6 +1,6 @@
 // The catalogue is the single source of truth for prices and option limits.
 export function configuredGroups(productId, groups, options) {
-  return groups.filter(g => g.product_id === productId).sort((a, b) => a.sort_order - b.sort_order)
+  return groups.filter(g => g.product_id === productId && g.active !== false).sort((a, b) => a.sort_order - b.sort_order)
     .map(g => ({...g, choices: options.filter(o => o.group_id === g.id && o.active).sort((a, b) => a.sort_order - b.sort_order)}));
 }
 
@@ -27,4 +27,16 @@ export function pricedUnit(product, configured, selected, notes = '') {
 
 export function cartSubtotal(cart) {
   return cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+}
+
+export function repriceCart(cart,products,categories,groups,options) {
+  return cart.map(item=>{
+    const product=products.find(p=>p.id===item.product_id&&p.active&&p.base_price>0);
+    if(!product||!categories.some(c=>c.id===product.category_id&&c.active))throw Error(`${item.name} ya no está disponible en la carta. Revisa el pedido.`);
+    const configured=configuredGroups(product.id,groups,options);
+    const selected=Object.fromEntries(configured.map(g=>[g.id,item.options.filter(o=>o.group_id===g.id).map(o=>o.option_id)]));
+    if(item.options.some(o=>!configured.some(g=>g.id===o.group_id)))throw Error(`Los cambios de ${item.name} se actualizaron. Edita ese producto en el pedido.`);
+    const repriced=pricedUnit(product,configured,selected,item.notes);
+    return {...repriced,quantity:item.quantity};
+  });
 }

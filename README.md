@@ -2,13 +2,13 @@
 
 Una sola aplicación para negocios gastronómicos con carta, productos armables, pedidos, caja, reparto, clientes, personal e impresión. Cada negocio tiene **su propia instalación y base Supabase**. Los componentes comunes reciben correcciones en esta base; nombre, colores, logo, carta, ingredientes y funciones se configuran por negocio.
 
-Este repositorio está en desarrollo. La versión pública de Ramé Sushi no se reemplaza al preparar esta base.
+Ramé Sushi usa esta base con su propia instalación. La carta se administra desde la pantalla **Carta** (perfil administrador), con grupos de selección, opciones y recargos configurables. Exportar/importar Excel permite modificaciones masivas con revisión previa y guardado transaccional.
 
 ## Configurar un negocio
 
 1. Crear un proyecto Supabase exclusivo y una instalación Vercel exclusiva. No usar la base de otro cliente.
 2. Instalar el esquema base de pedidos y catálogo que usa Ramé Sushi. Esta exportación de esquema todavía está pendiente para instalaciones nuevas; `migrations/20260928_operations.sql` es una ampliación y presupone que esas tablas ya existen.
-3. Aplicar `migrations/20260928_operations.sql`, `migrations/20261005_business_config.sql` y `migrations/20261005_19_rame_management.sql` en ese orden al proyecto nuevo. Revisar políticas RLS y roles antes de abrir el acceso; la última migración aún requiere validación con el esquema real.
+3. Aplicar `migrations/20260928_operations.sql`, `migrations/20261005_business_config.sql` y `migrations/20261005_19_rame_management.sql` en ese orden al proyecto nuevo. Revisar políticas RLS y roles antes de abrir el acceso; Estas ampliaciones se validaron con el esquema real de Ramé. Aplicar también `migrations/20261005203321_catalog_editor_excel.sql`, que habilita el editor transaccional y permite desactivar grupos.
 4. Configurar `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY` y las variables `VITE_BUSINESS_*` en el despliegue. Ver `examples/`. La clave de servicio jamás pertenece al frontend.
 5. Crear cuentas de empleados en Authentication y habilitar sus perfiles. En la pantalla **Configuración del negocio**, definir identidad, funciones y ubicación verificada. Cargar categorías, productos, grupos de opciones, ingredientes y tarifas propios.
 6. Probar pedidos mixtos, adicionales, cobros, caja, despacho, impresora y asistencia en teléfonos reales antes de operar.

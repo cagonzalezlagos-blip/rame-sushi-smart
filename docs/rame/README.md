@@ -1,12 +1,12 @@
 # Ramé Sushi Smart — operación integrada
 
-Esta rama reúne el POS de Ramé Sushi, el armador guiado de productos, disponibilidad, caja, reparto y la asistencia con GPS + QR. **Es una versión de prueba; la sucursal existente sigue sin cambios hasta aprobar y aplicar la migración.** El proyecto Supabase exclusivo es `ngqyxevyrfkdyuatklnl`.
+Esta rama reúne el POS de Ramé Sushi, el armador guiado de productos, disponibilidad, caja, reparto y la asistencia con GPS + QR. La versión anterior ya se publicó y la ampliación para editar la carta está preparada para subir a GitHub; su migración ya está aplicada. El proyecto Supabase exclusivo es `ngqyxevyrfkdyuatklnl`.
 
 ## Roles y nuevas pantallas
 
 | Perfil | Pantallas |
 | --- | --- |
-| Administrador | Resumen, caja, pedidos, proveedores, personal, repartidores, configuración y asistencia. |
+| Administrador | Carta editable, resumen, caja, pedidos, proveedores, personal, repartidores, configuración y asistencia. |
 | Cajera | POS, pedidos, clientes, caja, disponibilidad, personal y asistencia. Puede ver jornadas, sin editar perfiles ni tarifas. |
 | Repartidor | Entregas asignadas, ruta en Google Maps y asistencia. Puede compartir ubicación solo durante entregas activas y con la app abierta. |
 | Personal | Asistencia y sus jornadas con una estimación referencial de remuneración. |
@@ -41,3 +41,11 @@ Configura `VITE_SUPABASE_URL` y `VITE_SUPABASE_PUBLISHABLE_KEY` como variables p
 El QR se genera en **Asistencia** con sesión de dueña. El cajero toma pedidos con opciones paso a paso y puede marcar faltantes; los precios se cargan de Supabase y el servidor recalcula el pedido. La ubicación exacta, tarifas y usuarios requieren configuración del local.
 
 La creación de identidades de acceso sigue en el panel de Supabase; la app administra los perfiles ya creados. WhatsApp abre un mensaje para envío manual: los envíos automáticos necesitan la plataforma y plantillas oficiales. El cierre no implementa devoluciones ni pagos mixtos. El cálculo de remuneraciones es sólo estimativo. El cálculo de despacho sigue basado en el tramo elegido por caja y requiere validación humana de la dirección. La impresora térmica necesita pruebas con el agente Windows y el equipo conectado antes de operar.
+
+## Carta editable y Excel
+
+La pantalla **Carta** permite editar y duplicar tablas o productos, manejar categorías y definir grupos de cambios con mínimos, máximos, opciones y recargos. Los cambios se guardan juntos mediante `owner_apply_catalog`, con RLS y comprobación de permisos de administrador. La referencia esperada impide sobrescribir una fila que otra sesión cambió durante la edición.
+
+La importación `.xlsx` usa las hojas Categorias, Productos, Cambios y Opciones, y una referencia oculta de la exportación. Combina solo los campos que se editaron y bloquea conflictos. Las filas ausentes no se eliminan. El guardado de todo el lote es atómico: un dato inválido revierte el lote. Los pedidos existentes mantienen sus precios y opciones. La librería de Excel se carga solo al usar exportación o importación.
+
+La migración incremental es `migrations/20261005203321_catalog_editor_excel.sql`. Su prueba transaccional está en `tests/catalog-rpc-check.sql`; debe ejecutarse dentro de una transacción y terminar con ROLLBACK. No incorpora ni altera precios del local. Los grupos deshabilitados no se ofrecen en pedidos nuevos y el servidor comprueba recargos, grupos, cantidades y duplicados.
