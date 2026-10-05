@@ -1,27 +1,45 @@
-# Ramé Sushi Smart — fuente para implementación
+# Base gastronómica
 
-Estado: **base funcional de desarrollo**, NO se debe usar aún con clientes reales. Proyecto Supabase independiente creado: `ngqyxevyrfkdyuatklnl` (São Paulo). Se aplicaron migraciones para catálogo, opciones, pedidos, reparto, caja, personal, cola de impresión y roles.
+Una sola aplicación para negocios gastronómicos con carta, productos armables, pedidos, caja, reparto, clientes, personal e impresión. Cada negocio tiene **su propia instalación y base Supabase**. Los componentes comunes reciben correcciones en esta base; nombre, colores, logo, carta, ingredientes y funciones se configuran por negocio.
 
-## Publicar frontend
-1. Instala Node.js LTS; en esta carpeta ejecuta `npm install` y `npm run build`.
-2. Copia `.env.example` a `.env` y añade la clave **publishable** de este proyecto (nunca service_role). Para Vercel define `VITE_SUPABASE_URL` y `VITE_SUPABASE_PUBLISHABLE_KEY` como variables de entorno.
-3. Importa el repositorio a Vercel; Framework Vite, Build Command `npm run build`, Output Directory `dist`. Aún no se ha desplegado porque la integración de Vercel no devuelve equipos.
-4. En Supabase Authentication crea las cuentas de la dueña, cajero y repartidor. Inserta los `auth.users.id` correspondientes en `public.profiles` usando SQL Editor con roles `owner`, `cashier`, `courier`. **No habilites registro público de trabajadores**. Ejemplo: `insert into public.profiles(id,full_name,role) values ('UUID_REAL','Dueña','owner');`.
-5. La carta PDF recibida el 25/09/2026 ya está cargada en Supabase: 72 productos, 12 categorías, 17 grupos y 90 opciones. Falta confirmar precios de extras no especificados y configurar `delivery_zones` con tarifas reales; no se han insertado tarifas ficticias.
-6. Configura la impresora siguiendo `print-agent/INSTALAR-WINDOWS.txt` en Windows 10; la impresión automática no funciona sin este servicio local.
+Este repositorio está en desarrollo. La versión pública de Ramé Sushi no se reemplaza al preparar esta base.
 
-## Funcionalidad implementada en fuente
-- Inicio de sesión con Supabase Auth y roles.
-- POS y handrolls personalizables con precios calculados y validados en servidor mediante `staff_create_order`.
-- Pedidos y asignación de repartidor; repartidor ve solo sus pedidos y puede cambiar el estado por RPC restringida.
-- Registro de pago por RPC atómica en caja abierta; cierre de caja imprimible A4 desde navegador.
-- Confirmación genera `print_jobs` una sola vez; agente Windows recoge trabajos y los envía al controlador de la POS-H806.
-- Enlace manual WhatsApp; mensajes automáticos requieren WhatsApp Business Platform y plantillas autorizadas.
+## Configurar un negocio
 
-## Pendiente antes de operar
-- Confirmar extras no especificados en la carta, tramos de delivery y usuarios autorizados.
-- Revisión de políticas de acceso y auditoría de seguridad en entorno real, pruebas end-to-end de varias sesiones, pruebas con impresora USB.
-- Integrar servicio de mapas para cálculo por ruta y validar direcciones. Por ahora la caja selecciona el tramo manualmente.
-- Verificar el cierre de caja con el flujo completo de cobros, devoluciones, pagos mixtos y anulaciones; no son funciones completas aún.
-- Implementar administración editable del catálogo y gestión laboral según contratos; el cálculo laboral mostrado es estimativo.
-- Configurar dominio, respaldos, privacidad y WhatsApp oficial si se requieren mensajes automáticos sin clic.
+1. Crear un proyecto Supabase exclusivo y una instalación Vercel exclusiva. No usar la base de otro cliente.
+2. Instalar el esquema base de pedidos y catálogo que usa Ramé Sushi. Esta exportación de esquema todavía está pendiente para instalaciones nuevas; `migrations/20260928_operations.sql` es una ampliación y presupone que esas tablas ya existen.
+3. Aplicar `migrations/20260928_operations.sql`, `migrations/20261005_business_config.sql` y `migrations/20261005_19_rame_management.sql` en ese orden al proyecto nuevo. Revisar políticas RLS y roles antes de abrir el acceso; la última migración aún requiere validación con el esquema real.
+4. Configurar `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY` y las variables `VITE_BUSINESS_*` en el despliegue. Ver `examples/`. La clave de servicio jamás pertenece al frontend.
+5. Crear cuentas de empleados en Authentication y habilitar sus perfiles. En la pantalla **Configuración del negocio**, definir identidad, funciones y ubicación verificada. Cargar categorías, productos, grupos de opciones, ingredientes y tarifas propios.
+6. Probar pedidos mixtos, adicionales, cobros, caja, despacho, impresora y asistencia en teléfonos reales antes de operar.
+
+```bash
+npm ci
+npm run build
+npm run demo:standalone
+node --test tests/*.test.js
+npm run dev
+```
+
+`dist/demo-standalone.html` se abre directamente en el navegador y muestra tres cartas de ejemplo sin cuenta ni conexión a la base. Los pedidos de esa demostración son locales y ficticios.
+
+Sin URL y clave de Supabase, la app muestra una pantalla de configuración y no conecta con ningún negocio. El archivo `.env.production` anterior se retiró de esta rama para que una instalación nueva no quede conectada accidentalmente a Ramé.
+
+## Qué se comparte y qué cambia
+
+| Común en la base | Configuración por negocio |
+| --- | --- |
+| POS, carrito, reglas de opciones y cálculo | Carta, precios, ingredientes y grupos de selección |
+| Pedidos, estados, caja, reportes, proveedores y reparto | Nombre, logo HTTPS, icono, color, contacto y funciones visibles |
+| Roles, permisos, impresión y asistencia | Usuarios, tarifas, ubicación, impresora y base de datos |
+
+Un handroll, hamburguesa o pizza se modelan con el mismo producto, grupos con mínimos y máximos, y opciones con costo adicional. Los precios se leen de la base y el servidor debe recalcular el total. Las funciones visibles se configuran en `settings.brand_config` o variables de entorno; **ocultar una pantalla no sustituye las políticas RLS**.
+
+## Pendientes para ofrecer la plataforma a terceros
+
+- Generar y validar el esquema inicial completo y datos de ejemplo vacíos de clientes para crear negocios nuevos sin copiar datos de Ramé.
+- Automatizar alta de negocio, despliegue, respaldo y actualizaciones por instalación.
+- Pruebas de extremo a extremo con sesiones de dueño, caja y repartidor, junto con pruebas en impresora y celulares.
+- Gestionar pagos mixtos, devoluciones y mensajes automáticos solo si cada cliente los requiere y se integra el proveedor correspondiente.
+
+La guía de operación específica de Ramé queda en [`docs/rame/README.md`](docs/rame/README.md).

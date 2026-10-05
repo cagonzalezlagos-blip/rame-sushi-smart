@@ -1,0 +1,9 @@
+AGENTE DE IMPRESION RAMÉ - WINDOWS 10 - POS-H806 USB 80 MM
+1. Instala Node.js LTS y el controlador Windows de la impresora. Prueba imprimir desde Bloc de notas.
+2. Verifica en Configuración > Impresoras y escáneres el nombre exacto de la impresora.
+3. Copia esta carpeta print-agent SOLO al computador de caja. En PowerShell, dentro de esta carpeta, ejecuta npm ci.
+4. Copia .env.example como .env. Completa el nombre exacto de impresora y la service_role key obtenida de Supabase > Project Settings > API Keys. Escribe los valores sin comillas. NO compartas esa clave ni la subas a GitHub o Vercel.
+5. Ejecuta npm start. Confirma la impresión de una comanda de prueba y el estado printed en print_jobs.
+6. Para iniciar con Windows, usa Programador de tareas con una tarea al iniciar sesión que ejecute cmd /c npm start dentro de esta carpeta. Usa una cuenta de Windows restringida.
+7. Este agente envía texto a la cola del controlador Windows. La confirmación 'printed' indica que Windows aceptó el trabajo, NO que salió papel. Si falla, marca failed y NO reintenta automáticamente para evitar duplicados. Revisar y reponer manualmente.
+8. Antes de usar en producción, validar acentos, corte de papel, tamaño 80 mm y comportamiento del driver real.
