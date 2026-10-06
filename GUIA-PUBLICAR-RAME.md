@@ -1,39 +1,56 @@
-# Publicar Ramé Sushi en GitHub
+# Publicar usuarios y contraseñas en Ramé Sushi
 
-La base de datos Ramé (`ngqyxevyrfkdyuatklnl`) ya fue actualizada el 5 de octubre de 2026. Sus 72 productos se conservaron. La ampliación para editar la carta e intercambiar Excel también está aplicada. Los dos proyectos Vercel existentes están conectados a la rama `main` del repositorio y se despliegan al recibir un cambio allí.
+Esta actualización parte de la carta editable que ya está publicada. El servicio de usuarios y la migración de permisos ya fueron instalados en la base de Ramé Sushi; no debes ejecutar SQL ni configurar claves secretas.
 
-## Lo único que debes subir
+## Subir a GitHub
 
-1. Descarga y **descomprime** `Rame-Sushi-Carta-Editable-GitHub.zip`.
-2. Abre la carpeta `SUBIR-A-GITHUB` que aparece dentro. Selecciona **todo su contenido**, incluidos los archivos de las subcarpetas. No arrastres el ZIP ni la carpeta contenedora.
-3. Ve a [Subir archivos a la rama main](https://github.com/cagonzalezlagos-blip/rame-sushi-smart/upload/main). Arrastra allí la selección. Deben quedar en la raíz archivos como `index.html`, `src.js`, `package.json` y carpetas como `migrations` y `print-agent`.
-4. Si GitHub indica que un archivo ya existe, acepta reemplazarlo por esta versión. Escribe un mensaje como `Actualizar Ramé Sushi` y pulsa **Commit changes** en `main`.
-5. Espera a que Vercel termine el despliegue. Revisa la dirección que usas habitualmente: [rame-sushi-smart.vercel.app](https://rame-sushi-smart.vercel.app) o [rame-sushi-smart-01.vercel.app](https://rame-sushi-smart-01.vercel.app). Ambos proyectos están vinculados al repositorio.
+1. Descomprime `Rame-Sushi-Usuarios-y-Contrasenas-GitHub.zip`.
+2. Abre la raíz de `cagonzalezlagos-blip/rame-sushi-smart` → **Add file → Upload files**.
+3. Arrastra todos los archivos y carpetas que están **dentro** de `SUBIR-A-GITHUB`, conservando las carpetas internas. No subas el ZIP ni la carpeta contenedora como un nivel nuevo.
+4. Pulsa **Commit changes** y espera la publicación automática de Vercel.
+5. Abre la app y presiona **Ctrl + F5** en PC; en celular, cierra y vuelve a abrir la pestaña.
 
-No hace falta volver a ejecutar `MIGRACION-COMPLETA-RAME.sql`. La configuración pública de conexión a Ramé ya está en el archivo `.env.production` del repositorio actual; no aparece en la carpeta de subida porque no debe reemplazarse. Nunca subas una clave `service_role` ni el archivo privado `print-agent/.env`.
+Se conserva la carta, los recargos, Excel, pedidos, caja, jornadas y demás datos. No reemplaces `.env.production`.
 
-## Comprobación inicial
+## Agregar personas
 
-Entra con la cuenta administradora y comprueba que aparecen los 72 productos. Crea un pedido de prueba, confirma la comanda y revisa la caja. Prueba por separado las cuentas de cajera, personal y reparto. El repartidor debe marcar entrada, tener un pedido activo, abrir la aplicación y aceptar el permiso de ubicación para compartir posición; los kilómetros son aproximados. Google Maps abre la ruta de entrega.
+Ingresa como administrador → **Usuarios**. Completa nombre, correo, perfil y tarifa por hora. El perfil controla los permisos reales del servidor:
 
-La comanda manual se imprime desde el navegador. La impresión automática en la impresora del local requiere instalar `print-agent` en el computador de caja según `print-agent/INSTALAR-WINDOWS.txt`; esa instalación local **sí** es una tarea aparte.
+- **Administración**: control completo, usuarios, carta, reportes, proveedores y personal.
+- **Cajera / caja**: caja, pedidos, clientes, disponibilidad y consulta de personal; no puede gestionar accesos.
+- **Repartidor**: sus entregas, rutas y asistencia.
+- **Personal**: su asistencia, jornadas y remuneración referencial.
 
-PedidosYa y Uber Eats se registran como canales manuales. Las remuneraciones son estimaciones y el flujo de caja muestra lo que se registró, sin calcular impuestos o comisiones.
+Elige una forma de acceso:
 
-Si GitHub o Vercel muestra un error, conserva el texto o una captura para poder corregirlo. No vuelvas a ejecutar la migración por un problema de publicación.
+- **Invitación por correo**: la persona abre el mensaje más reciente y crea su contraseña en la app. Supabase puede requerir SMTP propio para enviar correos a personas que no son integrantes del proyecto. Si muestra ese error, usa la alternativa siguiente o configura SMTP antes de invitar.
+- **Contraseña inicial, sin enviar correo**: tú eliges una contraseña de 10 a 128 caracteres y la entregas de forma privada. La persona ingresa y puede cambiarla en **Mi cuenta**. Esta modalidad habilita la cuenta por decisión de administración, sin comprobar que la persona sea propietaria del correo; no obliga automáticamente a cambiar la contraseña inicial.
 
-## Editar la carta desde la aplicación
+Si el correo ya tiene perfil, edita la cuenta en la lista. Si tiene cuenta de acceso pero no perfil, se habilita manteniendo la contraseña anterior. Una cuenta sin perfil activo no obtiene acceso al negocio.
 
-Con perfil administrador, abre **Carta**. Puedes crear, editar o duplicar un producto o tabla, cambiar precio, composición, categoría, orden e imagen, y ocultarlo sin borrar pedidos anteriores.
+## Editar permisos
 
-En **Cambios y extras**, crea grupos como «Cambio del roll 1» o «Proteína». Mínimo 0 significa opcional; mínimo 1 obliga a elegir una opción. Define alternativas con recargo 0 si están incluidas y un recargo en pesos para las otras. Cada recargo se cobra una vez por opción elegida y por unidad del producto o tabla. Para una tabla con varios rolls, usa un grupo por roll si quieres que cada uno se elija por separado. No se cargaron cambios ni precios nuevos sin definirlos con el local.
+En **Usuarios**, busca por nombre o correo. Modifica el perfil, nombre, tarifa y **Permitir acceso a la app**; pulsa **Guardar perfil**. No se eliminan las jornadas o pedidos al desactivar una cuenta. No puedes quitar tu propio perfil de administración ni dejar el negocio sin un administrador activo.
 
-Caja selecciona estas opciones al tomar el pedido y ve el total con recargos. También puede escribir observaciones para cocina. Los precios se calculan nuevamente en el servidor. Si la carta cambia mientras hay un pedido en preparación en el carrito, se pide revisar sus precios o selecciones antes de registrarlo.
+Los permisos se validan en el servidor inmediatamente. Las pantallas de una sesión abierta se actualizan al recargar o dentro de aproximadamente un minuto. Si otra administración modificó la misma cuenta, actualiza la lista antes de guardar. Los cambios quedan registrados en la auditoría de accesos.
 
-## Editar por Excel
+## Contraseña y recuperación
 
-1. Desde **Carta → Exportar Excel**, descarga la carta actual.
-2. Edita las hojas **Categorias**, **Productos**, **Cambios** y **Opciones**. Los precios y recargos son pesos enteros. Conserva los códigos existentes y los encabezados.
-3. Desde **Carta → Importar Excel**, selecciona el archivo `.xlsx`, revisa el detalle y pulsa **Confirmar y guardar cambios**.
+Todos los perfiles tienen **Mi cuenta → Cambiar contraseña**: contraseña actual, nueva contraseña y repetición. Usa 10 caracteres o más. El cambio intenta cerrar las otras sesiones conservando el dispositivo actual.
 
-La importación permite agregar registros. Para enlazar un producto nuevo y sus opciones, usa códigos propios como `NUEVO-P1` y `NUEVO-G1` en las hojas relacionadas; al guardar, la app crea sus identificadores definitivos. Usa **Disponible = No** o **Habilitado = No** para retirarlos. Borrar una fila del Excel no borra el registro de la app. El Excel contiene una hoja oculta de referencia para detectar conflictos con ediciones posteriores; debes conservarla. Las fórmulas deben pegarse como valores antes de importar. Máximo: 5 MB y 3000 registros por archivo.
+Si no recuerdas la contraseña: pantalla de ingreso → **Olvidé mi contraseña** → correo de tu cuenta → **Enviar enlace de recuperación**. Abre el mensaje más reciente y elige la nueva contraseña en la app. Desde **Usuarios**, administración también puede solicitar el enlace para una cuenta activa. Administración no puede ver las contraseñas.
+
+## Direcciones de los correos
+
+En Supabase → Authentication → URL Configuration:
+
+- **Site URL**: `https://rame-sushi-smart.vercel.app`
+- **Redirect URLs**: agrega `https://rame-sushi-smart.vercel.app/` y `https://rame-sushi-smart-01.vercel.app/` si utilizas la segunda dirección.
+
+No uses `localhost` en producción. El enlace es de un solo uso; puede vencer. Si no recibes el correo, revisa Spam, los límites del proveedor y SMTP.
+
+## Para instalar la base en otro negocio (solo soporte técnico)
+
+Aplica las migraciones previas y `migrations/20261006000136_account_access_management.sql`; despliega `supabase/functions/manage-access` con verificación JWT activada. La función usa las claves del servidor de Supabase: nunca se incluyen claves privilegiadas en la app. Configura el secreto `APP_URL` con la URL pública del nuevo negocio y ajusta los orígenes permitidos en `index.ts`. Configura la misma dirección en Auth y SMTP cuando corresponda.
+
+Pruebas: `node --test tests/*.test.js`, `npm run build`; `tests/access-rpc-check.sql` debe ejecutarse en una transacción terminada en ROLLBACK, después de instalar la migración. No lo ejecutes como una operación de datos permanente.

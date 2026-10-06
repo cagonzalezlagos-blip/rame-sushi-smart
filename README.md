@@ -10,7 +10,7 @@ Ramé Sushi usa esta base con su propia instalación. La carta se administra des
 2. Instalar el esquema base de pedidos y catálogo que usa Ramé Sushi. Esta exportación de esquema todavía está pendiente para instalaciones nuevas; `migrations/20260928_operations.sql` es una ampliación y presupone que esas tablas ya existen.
 3. Aplicar `migrations/20260928_operations.sql`, `migrations/20261005_business_config.sql` y `migrations/20261005_19_rame_management.sql` en ese orden al proyecto nuevo. Revisar políticas RLS y roles antes de abrir el acceso; Estas ampliaciones se validaron con el esquema real de Ramé. Aplicar también `migrations/20261005203321_catalog_editor_excel.sql`, que habilita el editor transaccional y permite desactivar grupos.
 4. Configurar `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY` y las variables `VITE_BUSINESS_*` en el despliegue. Ver `examples/`. La clave de servicio jamás pertenece al frontend.
-5. Crear cuentas de empleados en Authentication y habilitar sus perfiles. En la pantalla **Configuración del negocio**, definir identidad, funciones y ubicación verificada. Cargar categorías, productos, grupos de opciones, ingredientes y tarifas propios.
+5. Crear el primer administrador en Authentication y su perfil owner; desplegar el servicio de accesos. Luego agregar empleados desde **Usuarios**. En la pantalla **Configuración del negocio**, definir identidad, funciones y ubicación verificada. Cargar categorías, productos, grupos de opciones, ingredientes y tarifas propios.
 6. Probar pedidos mixtos, adicionales, cobros, caja, despacho, impresora y asistencia en teléfonos reales antes de operar.
 
 ```bash
@@ -43,3 +43,9 @@ Un handroll, hamburguesa o pizza se modelan con el mismo producto, grupos con m�
 - Gestionar pagos mixtos, devoluciones y mensajes automáticos solo si cada cliente los requiere y se integra el proveedor correspondiente.
 
 La guía de operación específica de Ramé queda en [`docs/rame/README.md`](docs/rame/README.md).
+
+## Usuarios y contraseñas
+
+Administración dispone de **Usuarios** para agregar personas por correo, asignar Administración/Caja/Reparto/Personal, editar perfiles y desactivar accesos. Admite invitación por correo o contraseña inicial sin correo. Todos los perfiles tienen **Mi cuenta**; el ingreso incluye recuperación de contraseña. Ver [GUIA-PUBLICAR-RAME.md](GUIA-PUBLICAR-RAME.md) para publicar y configurar las direcciones y SMTP.
+
+El servidor `supabase/functions/manage-access` verifica la sesión y el perfil activo antes de usar Auth Admin. Nunca se entrega la clave privilegiada al navegador. La migración `20261006000136_account_access_management.sql` agrega listados de correo protegidos, edición con detección de conflictos, auditoría y protección del último administrador. Los roles conservan las políticas existentes; no hay permisos arbitrarios que solo oculten botones.

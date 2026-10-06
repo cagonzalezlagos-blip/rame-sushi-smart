@@ -32,7 +32,7 @@ Configura `VITE_SUPABASE_URL` y `VITE_SUPABASE_PUBLISHABLE_KEY` como variables p
 2. Aplicar `migrations/20260928_operations.sql`, `migrations/20261005_business_config.sql` y `migrations/20261005_19_rame_management.sql` **en ese orden a un entorno de prueba** con la misma estructura. Comprobar sus tipos, permisos y funciones, ejecutar pedidos, pagos, reportes, marcaciones y posiciones de prueba. Aplicar a la base real antes de publicar este frontend.
 3. Configurar en **Configuración** las coordenadas del acceso físico de El Nath 972, Villa Alemana. GPS y QR son ambos obligatorios, con precisión máxima de 50 m, radio inicial de 75 m y QR con vida de 5 minutos. El GPS puede ser suplantado; el sistema registra intentos y permite corrección autorizada con motivo.
 4. Confirmar precios de extras según la carta vigente y cargar tramos de `delivery_zones` reales. El servidor rechaza un costo de reparto que no coincida con una tarifa activa.
-5. Crear las cuentas en Supabase Authentication y habilitarlas desde **Personal** con sus ID y tarifas de referencia. No habilitar el registro público. Probar con dueña, caja, trabajador y repartidor en teléfonos distintos.
+5. Agregar las cuentas por correo desde **Usuarios**, asignar sus perfiles y tarifas de referencia. No habilitar el registro público. Probar con dueña, caja, trabajador y repartidor en teléfonos distintos.
 6. Probar compra personalizada y mixta, canales de venta, estados, cobro, pagos a proveedores, apertura y cierre de caja, asignación y entrega, GPS en marcha, WhatsApp manual, lector QR y comanda en la impresora real. Comparar el reporte con movimientos reales y revisar que no se dupliquen pagos.
 7. Sólo tras aprobación, integrar esta rama a `main` y desplegar en el proyecto Vercel del enlace actual. Mantener copias para revertir código y base de datos.
 
@@ -40,7 +40,7 @@ Configura `VITE_SUPABASE_URL` y `VITE_SUPABASE_PUBLISHABLE_KEY` como variables p
 
 El QR se genera en **Asistencia** con sesión de dueña. El cajero toma pedidos con opciones paso a paso y puede marcar faltantes; los precios se cargan de Supabase y el servidor recalcula el pedido. La ubicación exacta, tarifas y usuarios requieren configuración del local.
 
-La creación de identidades de acceso sigue en el panel de Supabase; la app administra los perfiles ya creados. WhatsApp abre un mensaje para envío manual: los envíos automáticos necesitan la plataforma y plantillas oficiales. El cierre no implementa devoluciones ni pagos mixtos. El cálculo de remuneraciones es sólo estimativo. El cálculo de despacho sigue basado en el tramo elegido por caja y requiere validación humana de la dirección. La impresora térmica necesita pruebas con el agente Windows y el equipo conectado antes de operar.
+La app crea cuentas desde **Usuarios** mediante el servicio seguro de accesos, con invitación o contraseña inicial. Todos los perfiles tienen **Mi cuenta**; la pantalla de ingreso incluye recuperación de contraseña. Las invitaciones a destinatarios externos pueden requerir SMTP propio. WhatsApp abre un mensaje para envío manual: los envíos automáticos necesitan la plataforma y plantillas oficiales. El cierre no implementa devoluciones ni pagos mixtos. El cálculo de remuneraciones es sólo estimativo. El cálculo de despacho sigue basado en el tramo elegido por caja y requiere validación humana de la dirección. La impresora térmica necesita pruebas con el agente Windows y el equipo conectado antes de operar.
 
 ## Carta editable y Excel
 
@@ -49,3 +49,5 @@ La pantalla **Carta** permite editar y duplicar tablas o productos, manejar cate
 La importación `.xlsx` usa las hojas Categorias, Productos, Cambios y Opciones, y una referencia oculta de la exportación. Combina solo los campos que se editaron y bloquea conflictos. Las filas ausentes no se eliminan. El guardado de todo el lote es atómico: un dato inválido revierte el lote. Los pedidos existentes mantienen sus precios y opciones. La librería de Excel se carga solo al usar exportación o importación.
 
 La migración incremental es `migrations/20261005203321_catalog_editor_excel.sql`. Su prueba transaccional está en `tests/catalog-rpc-check.sql`; debe ejecutarse dentro de una transacción y terminar con ROLLBACK. No incorpora ni altera precios del local. Los grupos deshabilitados no se ofrecen en pedidos nuevos y el servidor comprueba recargos, grupos, cantidades y duplicados.
+
+Los cambios de perfil y activación se auditan y se validan en el servidor. No se permite quitar el propio acceso de administración ni dejar el negocio sin un administrador activo. Ver [guía de publicación](../../GUIA-PUBLICAR-RAME.md).

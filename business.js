@@ -44,10 +44,10 @@ export function withBusinessSettings(base, settings = {}) {
 
 export function routesForRole(role, features) {
   const staff = ['Caja', 'Pedidos', ...(features.customers ? ['Clientes'] : []), ...(features.cash ? ['Cierre'] : []), 'Disponibilidad'];
-  if (role === 'owner') return ['Resumen', 'Carta', ...staff, 'Proveedores', 'Personal', ...(features.delivery ? ['Repartidores'] : []), 'Configuración', ...(features.attendance ? ['Asistencia'] : [])];
-  if (role === 'cashier') return [...staff, 'Personal', ...(features.attendance ? ['Asistencia'] : [])];
-  if (role === 'courier') return [...(features.delivery ? ['Repartos'] : []), ...(features.attendance ? ['Asistencia'] : [])];
-  return features.attendance ? ['Asistencia'] : [];
+  if (role === 'owner') return ['Resumen', 'Carta', ...staff, 'Proveedores', 'Personal', 'Usuarios', ...(features.delivery ? ['Repartidores'] : []), 'Configuración', ...(features.attendance ? ['Asistencia'] : []), 'Mi cuenta'];
+  if (role === 'cashier') return [...staff, 'Personal', ...(features.attendance ? ['Asistencia'] : []), 'Mi cuenta'];
+  if (role === 'courier') return [...(features.delivery ? ['Repartos'] : []), ...(features.attendance ? ['Asistencia'] : []), 'Mi cuenta'];
+  return ['worker'].includes(role) ? [...(features.attendance ? ['Asistencia'] : []), 'Mi cuenta'] : [];
 }
 
 export function themeInk(hex) {
