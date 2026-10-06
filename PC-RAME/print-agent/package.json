@@ -1,0 +1,8 @@
+{
+  "name": "rame-sushi-print-agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {"start": "node agent.js"},
+  "dependencies": {"@supabase/supabase-js": "2.117.2"}
+}

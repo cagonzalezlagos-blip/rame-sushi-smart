@@ -1,0 +1,44 @@
+RAMÉ SUSHI - COMPUTADOR DEL LOCAL
+
+1. Descomprime TODO el ZIP. No abras los instaladores desde el ZIP.
+2. En PC-RAME, haz doble clic en INSTALAR-RAME.cmd.
+3. El asistente crea un acceso directo a la app publicada.
+4. Para impresión automática, elige S; necesita Node.js LTS y el controlador de la impresora ya instalado.
+5. Selecciona la impresora e introduce localmente la clave service_role de Supabase.
+   Se obtiene en https://supabase.com/dashboard/project/ngqyxevyrfkdyuatklnl/settings/api
+   NO uses la clave anon/publishable. NO compartas la clave privada.
+6. Elige si quieres iniciar la impresión al iniciar sesión en Windows.
+7. Abre Rame Sushi para trabajar y Rame - Impresion para imprimir automáticamente.
+
+La app necesita internet. El acceso directo usa la versión publicada y conserva sus actualizaciones.
+El computador debe estar encendido y el agente abierto para imprimir automáticamente.
+El asistente copia el agente a %LOCALAPPDATA%\RameSushi.
+La clave queda cifrada con DPAPI: solo la misma cuenta de Windows y computador puede leerla.
+Si cambias de computador o usuario, repite la configuración. La clave NO está incluida en este ZIP.
+
+PRUEBA EN EL LOCAL
+- Imprime una página desde Bloc de notas para comprobar el controlador.
+- Revisa la cola de comandas pendientes antes de iniciar el agente.
+- Crea un pedido identificado claramente como prueba y confírmalo UNA vez.
+- Comprueba papel, ancho 80 mm, letras y detalle de ingredientes.
+- El estado printed confirma envío a Windows, no que el papel haya salido.
+- Los fallos NO se reintentan automáticamente para evitar comandas duplicadas.
+- La app conserva impresión manual si el agente no funciona.
+
+PARA DETENER O RETIRAR
+Cierra la ventana Rame - Impresion.
+Para quitar el inicio automático: pulsa Win+R, escribe shell:startup y elimina Rame - Impresion.lnk.
+Elimina los accesos directos y la carpeta %LOCALAPPDATA%\RameSushi si quieres desinstalar.
+
+CARPETA SUBIR-A-GITHUB
+Es una actualización independiente para publicar la apertura de caja.
+Solo sus archivos se suben a la raíz de GitHub; PC-RAME se queda en el computador del local.
+No hace falta publicar esa actualización para usar el acceso directo.
+
+ESTADO
+Agente revisado y sintaxis de JavaScript comprobada.
+Los scripts de Windows y la impresión física deben probarse en el computador del local: no se han ejecutado desde este entorno Linux.
+Logo oficial incorporado en ingreso, encabezado e impresión manual desde navegador.
+El agente automático mantiene la comanda de texto, sin imagen del logo.
+El diseño negro se publica subiendo todo el contenido de SUBIR-A-GITHUB, incluida assets, a la raíz del repositorio.
+Las capturas incluidas muestran datos simulados para previsualizar la interfaz.
