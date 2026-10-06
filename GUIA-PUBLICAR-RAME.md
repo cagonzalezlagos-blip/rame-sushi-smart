@@ -1,56 +1,75 @@
-# Publicar usuarios y contraseñas en Ramé Sushi
+# Ramé Sushi: reparto automático y pago por distancia
 
-Esta actualización parte de la carta editable que ya está publicada. El servicio de usuarios y la migración de permisos ya fueron instalados en la base de Ramé Sushi; no debes ejecutar SQL ni configurar claves secretas.
+## Estado de esta actualización
 
-## Subir a GitHub
+El servidor de Ramé Sushi ya tiene instalada la migración y activa la función de reparto. Las consultas externas fueron autorizadas y se comprobó una ruta real con Photon y OSRM. El formulario y los permisos se comprobaron con datos simulados; los cálculos y el registro del pedido se verificaron en la base publicada mediante una transacción terminada en ROLLBACK. Ahora puedes subir este paquete a GitHub para publicar el formulario nuevo.
 
-1. Descomprime `Rame-Sushi-Usuarios-y-Contrasenas-GitHub.zip`.
-2. Abre la raíz de `cagonzalezlagos-blip/rame-sushi-smart` → **Add file → Upload files**.
-3. Arrastra todos los archivos y carpetas que están **dentro** de `SUBIR-A-GITHUB`, conservando las carpetas internas. No subas el ZIP ni la carpeta contenedora como un nivel nuevo.
-4. Pulsa **Commit changes** y espera la publicación automática de Vercel.
-5. Abre la app y presiona **Ctrl + F5** en PC; en celular, cierra y vuelve a abrir la pestaña.
+Los usuarios y contraseñas de la versión anterior siguen disponibles. No debes volver a crear cuentas ni reemplazar la base de datos.
 
-Se conserva la carta, los recargos, Excel, pedidos, caja, jornadas y demás datos. No reemplaces `.env.production`.
+## Qué cambia
 
-## Agregar personas
+La caja deja de pedir elegir un tramo. Busca el domicilio, confirma el punto exacto y calcula la distancia de ida por calles desde el local. La app asigna y guarda el pago por entrega:
 
-Ingresa como administrador → **Usuarios**. Completa nombre, correo, perfil y tarifa por hora. El perfil controla los permisos reales del servidor:
+| Distancia | Pago al repartidor |
+| --- | --- |
+| Menos de 3 km | $1.000 |
+| Desde 3 km hasta menos de 5 km | $1.500 |
+| Desde 5 km | $2.000 |
 
-- **Administración**: control completo, usuarios, carta, reportes, proveedores y personal.
-- **Cajera / caja**: caja, pedidos, clientes, disponibilidad y consulta de personal; no puede gestionar accesos.
-- **Repartidor**: sus entregas, rutas y asistencia.
-- **Personal**: su asistencia, jornadas y remuneración referencial.
+Exactamente 3 km corresponde a $1.500 y exactamente 5 km a $2.000. Los límites y valores se pueden editar desde administración. Este pago complementa la remuneración por jornada; se contabiliza cuando el pedido queda entregado. No genera una salida de caja por sí solo.
 
-Elige una forma de acceso:
+El cobro de delivery al cliente se configura por separado. Inicialmente vale $0 porque no había tarifas activas de cobro configuradas. No se suma automáticamente el pago al repartidor al total del cliente.
 
-- **Invitación por correo**: la persona abre el mensaje más reciente y crea su contraseña en la app. Supabase puede requerir SMTP propio para enviar correos a personas que no son integrantes del proyecto. Si muestra ese error, usa la alternativa siguiente o configura SMTP antes de invitar.
-- **Contraseña inicial, sin enviar correo**: tú eliges una contraseña de 10 a 128 caracteres y la entregas de forma privada. La persona ingresa y puede cambiarla en **Mi cuenta**. Esta modalidad habilita la cuenta por decisión de administración, sin comprobar que la persona sea propietaria del correo; no obliga automáticamente a cambiar la contraseña inicial.
+## Preparar el punto de salida
 
-Si el correo ya tiene perfil, edita la cuenta en la lista. Si tiene cuenta de acceso pero no perfil, se habilita manteniendo la contraseña anterior. Una cuenta sin perfil activo no obtiene acceso al negocio.
+En **Configuración → Reparto y tarifas**, administración debe verificar la latitud y longitud del local. En Ramé se dejó el punto de salida pendiente de configurar porque el buscador encontró El Nath sin ubicar el número 972 y las coordenadas anteriores no quedaron verificadas. No se calcula un reparto hasta guardar el punto exacto. Este punto es independiente de la ubicación usada para asistencia.
 
-## Editar permisos
+Estando dentro del local, pulsa **Usar mi ubicación como salida**, permite la ubicación precisa y luego **Guardar tarifas de reparto**. Si el GPS no tiene precisión suficiente, vuelve a intentar o ingresa coordenadas verificadas. No uses el botón estando en tu casa u otro lugar.
 
-En **Usuarios**, busca por nombre o correo. Modifica el perfil, nombre, tarifa y **Permitir acceso a la app**; pulsa **Guardar perfil**. No se eliminan las jornadas o pedidos al desactivar una cuenta. No puedes quitar tu propio perfil de administración ni dejar el negocio sin un administrador activo.
+En el mismo apartado puedes modificar los límites en kilómetros, el pago al repartidor y el cobro al cliente de cada tramo. Los cambios se aplican a pedidos nuevos; los pedidos registrados conservan sus valores originales.
 
-Los permisos se validan en el servidor inmediatamente. Las pantallas de una sesión abierta se actualizan al recargar o dentro de aproximadamente un minuto. Si otra administración modificó la misma cuenta, actualiza la lista antes de guardar. Los cambios quedan registrados en la auditoría de accesos.
+## Registrar delivery
 
-## Contraseña y recuperación
+1. Agrega los productos y los datos del cliente.
+2. Selecciona **Delivery** y escribe calle, número y comuna.
+3. Pulsa **Ubicar domicilio**. Elige el resultado y revisa el punto en el mapa. Una calle sin número puede producir una ubicación aproximada; debes mover el punto al domicilio exacto. También puedes pegar latitud y longitud o elegir un punto en el mapa.
+4. Marca **Confirmo el domicilio del cliente en el punto señalado**.
+5. Pulsa **Calcular distancia y pago** o **Registrar pedido** para calcular y registrar directamente.
 
-Todos los perfiles tienen **Mi cuenta → Cambiar contraseña**: contraseña actual, nueva contraseña y repetición. Usa 10 caracteres o más. El cambio intenta cerrar las otras sesiones conservando el dispositivo actual.
+La app muestra kilómetros por calles, tramo, pago al repartidor y cobro al cliente. Si editas el domicilio o el punto, debes confirmar y calcular otra vez. El cálculo vence a los 20 minutos. Si el proveedor no encuentra una ruta, no se inventa una distancia ni se asigna un importe manual.
 
-Si no recuerdas la contraseña: pantalla de ingreso → **Olvidé mi contraseña** → correo de tu cuenta → **Enviar enlace de recuperación**. Abre el mensaje más reciente y elige la nueva contraseña en la app. Desde **Usuarios**, administración también puede solicitar el enlace para una cuenta activa. Administración no puede ver las contraseñas.
+## Revisar remuneraciones
 
-## Direcciones de los correos
+**Repartidores** muestra por fecha las entregas completadas, la suma de pagos y los kilómetros de ida de esos pedidos. **Repartos** permite a cada repartidor ver sus propios adicionales. En las jornadas de **Personal** y **Asistencia**, la estimación incorpora las entregas completadas durante esa jornada.
 
-En Supabase → Authentication → URL Configuration:
+Los kilómetros por ruta de cada pedido se muestran separados de los kilómetros GPS de la jornada. Pedidos antiguos sin cálculo automático no reciben pagos retroactivos. La estimación no sustituye una liquidación de remuneraciones ni confirma que el dinero ya fue pagado.
 
-- **Site URL**: `https://rame-sushi-smart.vercel.app`
-- **Redirect URLs**: agrega `https://rame-sushi-smart.vercel.app/` y `https://rame-sushi-smart-01.vercel.app/` si utilizas la segunda dirección.
+## Datos enviados a los mapas, autorizados
 
-No uses `localhost` en producción. El enlace es de un solo uso; puede vencer. Si no recibes el correo, revisa Spam, los límites del proveedor y SMTP.
+- Photon, operado por Komoot: dirección buscada y coordenadas del local para priorizar resultados cercanos.
+- OSRM, operado por FOSSGIS/OpenStreetMap: coordenadas del local y del domicilio para obtener la distancia por calles.
+- OpenStreetMap: solicitudes de imágenes del mapa correspondientes al área visualizada desde el navegador.
 
-## Para instalar la base en otro negocio (solo soporte técnico)
+La app no envía nombre ni teléfono del cliente a esos proveedores. Las consultas se reutilizan desde una caché privada con validez de siete días y se limita la frecuencia por proveedor. Las cotizaciones y los datos de remuneración están protegidos en el servidor. Los servidores públicos pueden fallar o limitar el uso; para volumen elevado se debe contratar o instalar un proveedor propio.
 
-Aplica las migraciones previas y `migrations/20261006000136_account_access_management.sql`; despliega `supabase/functions/manage-access` con verificación JWT activada. La función usa las claves del servidor de Supabase: nunca se incluyen claves privilegiadas en la app. Configura el secreto `APP_URL` con la URL pública del nuevo negocio y ajusta los orígenes permitidos en `index.ts`. Configura la misma dirección en Auth y SMTP cuando corresponda.
+Referencias: [Photon](https://github.com/komoot/photon), [uso de OSRM FOSSGIS](https://routing.openstreetmap.de/about.html), [API de OSRM](https://project-osrm.org/docs/v5.24.0/api/), [política de mapas](https://operations.osmfoundation.org/policies/tiles/).
 
-Pruebas: `node --test tests/*.test.js`, `npm run build`; `tests/access-rpc-check.sql` debe ejecutarse en una transacción terminada en ROLLBACK, después de instalar la migración. No lo ejecutes como una operación de datos permanente.
+## Publicar ahora
+
+1. Descarga y descomprime el ZIP.
+2. En el repositorio existente de GitHub, abre **Add file → Upload files**.
+3. Arrastra el contenido de la carpeta descomprimida, sin agregar una carpeta contenedora. Conserva la configuración pública actual de Supabase y las variables de Vercel. El paquete excluye `.env.production` y claves privilegiadas.
+4. Guarda en la rama principal. Vercel debe instalar la nueva dependencia Leaflet y publicar la app.
+5. Cuando el despliegue esté listo, entra de nuevo. Desde el local configura el punto de salida con el botón GPS y guarda las tarifas. Luego prueba un retiro y un delivery antes de operar.
+
+## Instalación en otro negocio: soporte técnico
+
+En Ramé esta instalación ya se realizó. Para otro negocio, después de autorizar sus consultas de mapas, aplicar `migrations/20261006003630_automatic_delivery_compensation.sql` sobre la base existente, después de las migraciones previas. Desplegar `supabase/functions/delivery-quote` con verificación JWT activa, incluyendo `index.ts`, `handler.js` y `model.js`. Utiliza las claves del servidor suministradas por Supabase, nunca en el navegador. `APP_URL` debe apuntar a la app pública y los orígenes permitidos deben coincidir con los dominios usados.
+
+`PHOTON_URL` y `OSRM_URL` permiten sustituir los servidores públicos por una instalación o proveedor compatible. El servicio de usuarios `manage-access` permanece separado. Se deben mantener las URL de recuperación de contraseña configuradas con los dominios públicos, sin localhost.
+
+Verificaciones: `node --test tests/*.test.js`, `npm run build`. `tests/delivery-rpc-check.sql` se usa únicamente en una transacción que finaliza en ROLLBACK. No debe guardarse como datos permanentes.
+
+## Verificación técnica de permisos
+
+Las cotizaciones, la caché y el control de frecuencia son tablas privadas sin políticas para usuarios; el servidor accede con su clave privilegiada. Los procedimientos de pedidos y reportes comprueban la sesión y el perfil. La función pública de identidad del negocio devuelve solo nombre, contacto y marca, sin tarifas internas. Las advertencias del analizador por funciones SECURITY DEFINER se revisaron como interfaces intencionales con acceso limitado: [referencia del analizador](https://supabase.com/docs/guides/database/database-linter?lint=0028_anon_security_definer_function_executable).
