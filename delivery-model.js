@@ -9,5 +9,17 @@ export function deliveryBand(distance,c){
  return {courier_pay:c[tier+'_pay'],customer_fee:c[tier+'_fee'],band_label:tier==='near'?`Menos de ${c.near_km} km`:tier==='mid'?`${c.near_km} a menos de ${c.far_km} km`:`${c.far_km} km o más`};
 }
 export function validPoint(p){return p&&Number.isFinite(p.lat)&&Number.isFinite(p.lng)&&Math.abs(p.lat)<=90&&Math.abs(p.lng)<=180;}
-export function pointFromText(text){const match=String(text).trim().match(/^(?:https:\/\/[^\s]*?@)?\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)(?:,.*)?$/);if(!match)return null;const p={lat:Number(match[1]),lng:Number(match[2])};return validPoint(p)?p:null;}
+export function pointFromText(text){
+ const input=String(text??'').trim();let value=input;
+ if(/^https?:\/\//i.test(input)){
+  let url;try{url=new URL(input);}catch{return null;}
+  if(!/^(?:www\.)?(?:google\.[a-z.]+|maps\.google\.[a-z.]+)$/.test(url.hostname))return null;
+  let decoded;try{decoded=decodeURIComponent(url.href);}catch{return null;}const pairs=[...decoded.matchAll(/!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)/g)];
+  if(pairs.length===1)value=pairs[0][1]+','+pairs[0][2];
+  else if(pairs.length>1)return null;
+  else value=url.searchParams.get('query')||url.searchParams.get('q')||'';
+ }
+ const match=value.match(/^\s*\(?\s*(-?\d+(?:\.\d+)?)\s*[,;]\s*(-?\d+(?:\.\d+)?)\s*\)?\s*$/);if(!match)return null;const p={lat:Number(match[1]),lng:Number(match[2])};return validPoint(p)?p:null;
+}
+
 export function courierPaySummary(rows){const byCourier=new Map();for(const r of rows){const x=byCourier.get(r.courier_id)||{id:r.courier_id,name:r.courier_name,count:0,pay:0,distance:0};x.count++;x.pay+=Number(r.courier_pay||0);x.distance+=Number(r.distance_m||0);byCourier.set(x.id,x);}return [...byCourier.values()];}

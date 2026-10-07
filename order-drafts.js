@@ -1,11 +1,11 @@
-import {bindExtras} from './order-workflow.js';
+import {bindExtras,defaultSauces} from './order-workflow.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function createDraftManager({client,userId,onSelect,onError}){
  let rows=[],active=null,timer=null,chain=Promise.resolve(),loaded=false,read=null,status=null;
  const versions=new Map(),blocked=new Set();
  const cacheKey='rame-drafts-'+userId;
  function cache(){try{localStorage.setItem(cacheKey,JSON.stringify(rows));}catch{}}
- function blank(){return {id:crypto.randomUUID(),data:{label:'Nuevo pedido',fields:{},cart:[],sauces:[]},version:0};}
+ function blank(){return {id:crypto.randomUUID(),data:{label:'Nuevo pedido',fields:{},cart:[],sauces:defaultSauces()},version:0};}
  function current(){return rows.find(r=>r.id===active);}
  async function load(){if(loaded)return;const {data,error}=await client.from('order_drafts').select('*').eq('user_id',userId).order('updated_at');if(error)throw error;rows=(data||[]).map(r=>({id:r.id,data:r.data,version:r.version}));rows.forEach(r=>versions.set(r.id,r.version));try{for(const cached of JSON.parse(localStorage.getItem(cacheKey)||'[]')){const server=rows.find(r=>r.id===cached.id);if(server&&server.version===cached.version)server.data=cached.data;else if(!server&&cached.version===0)rows.push(cached);}}catch{}if(!rows.length)rows.push(blank());active=rows[0].id;loaded=true;cache();}
  function capture(){if(!read||!current())return;current().data=read();cache();}
