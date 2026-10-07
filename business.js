@@ -44,10 +44,10 @@ export function withBusinessSettings(base, settings = {}) {
 
 export function routesForRole(role, features) {
   const staff = ['Caja', 'Pedidos', ...(features.customers ? ['Clientes'] : []), ...(features.cash ? ['Cierre'] : []), 'Disponibilidad'];
-  if (role === 'owner') return ['Resumen', 'Carta', ...staff, 'Proveedores', 'Personal', 'Usuarios', ...(features.delivery ? ['Repartidores'] : []), 'Configuración', ...(features.attendance ? ['Asistencia'] : []), 'Mi cuenta'];
-  if (role === 'cashier') return [...staff, 'Personal', ...(features.attendance ? ['Asistencia'] : []), 'Mi cuenta'];
-  if (role === 'courier') return [...(features.delivery ? ['Repartos'] : []), ...(features.attendance ? ['Asistencia'] : []), 'Mi cuenta'];
-  return ['worker'].includes(role) ? [...(features.attendance ? ['Asistencia'] : []), 'Mi cuenta'] : [];
+  if (role === 'owner') return ['Resumen', 'Carta', ...staff, 'Proveedores', 'Personal', 'Remuneraciones', 'Usuarios', ...(features.delivery ? ['Repartidores','Zonas de reparto'] : []), 'Configuración', ...(features.attendance ? ['Asistencia'] : []), 'Mi cuenta'];
+  if (role === 'cashier') return [...staff, ...(features.delivery ? ['Repartidores'] : []), 'Personal', 'Remuneraciones', ...(features.attendance ? ['Asistencia'] : []), 'Mi cuenta'];
+  if (role === 'courier') return [...(features.delivery ? ['Repartos'] : []), ...(features.attendance ? ['Asistencia'] : []), 'Remuneraciones', 'Mi cuenta'];
+  return ['worker'].includes(role) ? [...(features.attendance ? ['Asistencia'] : []), 'Remuneraciones', 'Mi cuenta'] : [];
 }
 
 export function themeInk(hex) {

@@ -1,4 +1,4 @@
-export const CHANNELS={counter:'Local',pedidosya:'PedidosYa',ubereats:'Uber Eats'};
+export const CHANNELS={counter:'Local',pedidosya:'PedidosYa',ubereats:'Uber Eats',whatsapp:'WhatsApp'};
 export const PAYMENT_NAMES={cash:'Efectivo',card:'Tarjeta',transfer:'Transferencia'};
 
 export function mapsRoute(destination,origin=''){

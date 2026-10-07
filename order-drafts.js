@@ -1,0 +1,28 @@
+import {bindExtras} from './order-workflow.js';
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+export function createDraftManager({client,userId,onSelect,onError}){
+ let rows=[],active=null,timer=null,chain=Promise.resolve(),loaded=false,read=null,status=null;
+ const versions=new Map(),blocked=new Set();
+ const cacheKey='rame-drafts-'+userId;
+ function cache(){try{localStorage.setItem(cacheKey,JSON.stringify(rows));}catch{}}
+ function blank(){return {id:crypto.randomUUID(),data:{label:'Nuevo pedido',fields:{},cart:[],sauces:[]},version:0};}
+ function current(){return rows.find(r=>r.id===active);}
+ async function load(){if(loaded)return;const {data,error}=await client.from('order_drafts').select('*').eq('user_id',userId).order('updated_at');if(error)throw error;rows=(data||[]).map(r=>({id:r.id,data:r.data,version:r.version}));rows.forEach(r=>versions.set(r.id,r.version));try{for(const cached of JSON.parse(localStorage.getItem(cacheKey)||'[]')){const server=rows.find(r=>r.id===cached.id);if(server&&server.version===cached.version)server.data=cached.data;else if(!server&&cached.version===0)rows.push(cached);}}catch{}if(!rows.length)rows.push(blank());active=rows[0].id;loaded=true;cache();}
+ function capture(){if(!read||!current())return;current().data=read();cache();}
+ function notice(message){if(status?.isConnected)status.textContent=message;}
+ function queue(row){const snapshot=structuredClone(row);chain=chain.catch(()=>{}).then(async()=>{if(blocked.has(snapshot.id))throw Error('Este borrador cambió en otra sesión. Recarga para revisarlo.');const {data,error}=await client.rpc('staff_save_order_draft',{p_id:snapshot.id,p_data:snapshot.data,p_version:versions.get(snapshot.id)||0});if(error){if(error.message.includes('otra sesión'))blocked.add(snapshot.id);throw error;}versions.set(snapshot.id,data);const live=rows.find(r=>r.id===snapshot.id);if(live)live.version=data;cache();notice('Borrador guardado.');});chain.catch(error=>notice('No se pudo guardar: '+error.message));return chain;}
+ function changed(){capture();notice('Guardando borrador…');clearTimeout(timer);const row=current();timer=setTimeout(()=>queue(row),600);}
+ async function flush(){clearTimeout(timer);capture();if(current())await queue(current());await chain;}
+ function mount({target,form,getCart,getDelivery}){
+  status=target.querySelector('[data-draft-status]');
+  read=()=>({label:form.elements.name.value.trim()||current()?.data.label||'Nuevo pedido',fields:Object.fromEntries(new FormData(form)),cart:structuredClone(getCart()),sauces:Array.from(form.querySelectorAll('[data-sauce-name]')).map(el=>({name:el.value,quantity:el.closest('.sauce-row').querySelector('[data-sauce-qty]').value})),delivery:getDelivery?.()});
+  target.querySelector('[data-draft-tabs]').innerHTML=rows.map(r=>`<button type="button" data-draft="${r.id}" class="${r.id===active?'selected':''}">${esc(r.data.label||'Nuevo pedido')}</button>`).join('');
+  target.querySelectorAll('[data-draft]').forEach(b=>b.onclick=async()=>{try{await flush();active=b.dataset.draft;read=null;onSelect(current());}catch(e){onError(e);}});
+  target.querySelector('[data-new-draft]').onclick=async()=>{try{await flush();const row=blank();rows.push(row);active=row.id;read=null;cache();onSelect(row);}catch(e){onError(e);}};
+  target.querySelector('[data-discard-draft]').onclick=async()=>{if(!confirm('¿Descartar este borrador? No se registrará ni imprimirá.'))return;try{clearTimeout(timer);await chain;const id=active;const {error}=await client.from('order_drafts').delete().eq('id',id).eq('user_id',userId).eq('version',versions.get(id)||0).select('id').then(r=>r.error?r:r.data?.length||!versions.has(id)?r:{error:Error('El borrador cambió en otra sesión; recarga antes de descartarlo.')});if(error)throw error;rows=rows.filter(r=>r.id!==id);if(!rows.length)rows.push(blank());active=rows[0].id;read=null;cache();onSelect(current());}catch(e){onError(e);}};
+  form.addEventListener('input',changed);form.addEventListener('change',changed);bindExtras(form,changed);notice('Los borradores se guardan en tu cuenta.');
+ }
+ async function completed(){clearTimeout(timer);await chain.catch(()=>{});const id=active;const {error}=await client.from('order_drafts').delete().eq('id',id).eq('user_id',userId);if(error)notice('Pedido registrado; no se pudo retirar el borrador.');rows=rows.filter(r=>r.id!==id);if(!rows.length)rows.push(blank());active=rows[0].id;read=null;cache();}
+ async function create(data){await flush();const row=blank();row.data=structuredClone(data);rows.push(row);active=row.id;read=null;cache();await queue(row);onSelect(row);}
+ return {load,current,mount,changed,flush,capture,completed,create,unmount:()=>{capture();read=null;status=null;},html:()=>'<div class="draft-tools"><div data-draft-tabs class="actions"></div><div class="actions"><button type="button" data-new-draft>+ Otro pedido</button><button type="button" data-discard-draft class="quiet">Descartar borrador</button></div><p data-draft-status role="status"></p></div>'};
+}

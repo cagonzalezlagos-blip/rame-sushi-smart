@@ -1,20 +1,8 @@
 {
-  "name": "base-gastronomica",
-  "version": "0.3.0",
+  "name": "rame-sushi-print-agent",
+  "version": "0.1.0",
   "private": true,
   "type": "module",
-  "scripts": {
-    "demo:standalone": "node scripts/build-demo-standalone.mjs",
-    "dev": "vite --host 0.0.0.0",
-    "build": "vite build",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "@supabase/supabase-js": "2.117.2",
-    "exceljs": "4.4.0",
-    "jsqr": "1.4.0",
-    "leaflet": "1.9.4",
-    "qrcode": "1.5.4",
-    "vite": "7.3.6"
-  }
+  "scripts": {"start": "node agent.js"},
+  "dependencies": {"@supabase/supabase-js": "2.117.2"}
 }

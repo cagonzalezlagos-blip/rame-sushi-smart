@@ -1,0 +1,14 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {insidePolygon,validatePolygon,matchingArea,communeFromAddress} from '../delivery-areas.js';
+import {repeatCandidates} from '../customer-history.js';
+const polygon={type:'Polygon',coordinates:[[[-72,-34],[-70,-34],[-70,-32],[-72,-32],[-72,-34]]]};
+test('zone polygons include edges and corners but reject outside points',()=>{assert.equal(validatePolygon(polygon),polygon);for(const point of [{lat:-33,lng:-71},{lat:-34,lng:-71},{lat:-34,lng:-72}])assert.ok(insidePolygon(point,polygon));assert.equal(insidePolygon({lat:-33,lng:-73},polygon),false);});
+test('crossing, degenerate, repeated and out-of-range polygons are rejected',()=>{for(const ring of [[[0,0],[1,1],[0,1],[1,0],[0,0]],[[0,0],[1,0],[2,0],[0,0]],[[0,0],[1,0],[1,0],[0,0]],[[190,0],[1,0],[1,1],[190,0]]])assert.throws(()=>validatePolygon({type:'Polygon',coordinates:[ring]}));});
+test('polygon takes precedence over commune; priority resolves overlaps; inactive ignored',()=>{const areas=[{id:'a',active:true,commune:'Quilpué',priority:0},{id:'b',active:true,polygon,priority:20},{id:'c',active:true,polygon,priority:10},{id:'d',active:false,polygon,priority:0}];assert.equal(matchingArea(areas,{lat:-33,lng:-71},'Quilpué').id,'c');assert.equal(matchingArea(areas,{lat:-35,lng:-71},' quilpué ').id,'a');assert.equal(matchingArea(areas,{lat:-35,lng:-71},'Otra'),null);});
+const catalog={products:[{id:'p',name:'Roll',active:true,category_id:'c',base_price:5000}],categories:[{id:'c',active:true}],groups:[{id:'g',product_id:'p',name:'Relleno',min_select:1,max_select:1,active:true}],options:[{id:'o',group_id:'g',name:'Palta',active:true,price_delta:400}]};
+const historical={items:[{product_id:'p',product_name:'Roll',quantity:2,unit_price:1000,notes:'Sin soya',selected_options:[{group:'Relleno',name:'Palta',price_delta:10}]}]};
+test('repeat resolves historical option names to current IDs and uses current prices',()=>{const [{item,error}]=repeatCandidates(historical,catalog);assert.equal(error,undefined);assert.equal(item.price,5400);assert.equal(item.quantity,2);assert.equal(item.options[0].option_id,'o');assert.equal(item.notes,'Sin soya');});
+test('repeat never silently drops unavailable products or changed required options',()=>{assert.ok(repeatCandidates(historical,{...catalog,options:[]})[0].error);assert.ok(repeatCandidates(historical,{...catalog,products:[]})[0].error);assert.ok(repeatCandidates(historical,{...catalog,options:[...catalog.options,{...catalog.options[0],id:'duplicate'}]})[0].error);assert.ok(repeatCandidates({items:[{...historical.items[0],selected_options:[]}]},catalog)[0].error);});
+
+test('delivery infers communes from addresses with or without accents',()=>{assert.equal(communeFromAddress('Calle 123, Quilpue, Chile',['Villa Alemana','Quilpué']),'Quilpué');assert.equal(communeFromAddress('Calle Quilpuecito 123',['Quilpué']),null);});

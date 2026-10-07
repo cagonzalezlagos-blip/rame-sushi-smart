@@ -1,0 +1,14 @@
+export const normalizePhone=value=>{let digits=String(value||'').replace(/\D/g,'');if(digits.length===9)digits='56'+digits;return digits;};
+export const orderNumber=o=>o.daily_number?String(o.daily_number).padStart(3,'0'):String(o.order_number);
+export const giftsText=o=>[...(o.gift_sauces||[]).map(s=>`${s.quantity} ${s.name}`),`${o.chopsticks||0} pares de palitos`].join(' · ');
+export function readExtras(form){
+ const sauces=Array.from(form.querySelectorAll('[data-sauce-name]')).map(el=>({name:el.value.trim(),quantity:Number(el.closest('.sauce-row').querySelector('[data-sauce-qty]').value)})).filter(s=>s.name||s.quantity);
+ if(sauces.some(s=>!s.name||!Number.isInteger(s.quantity)||s.quantity<1||s.quantity>100))throw Error('Indica el tipo y la cantidad de cada salsa (1 a 100).');
+ const chopsticks=Number(form.elements.chopsticks.value);if(!Number.isInteger(chopsticks)||chopsticks<0||chopsticks>100)throw Error('Indica de 0 a 100 pares de palitos.');
+ return {gift_sauces:sauces,chopsticks,delivery_notes:form.elements.delivery_notes.value.trim(),scheduled_at:form.elements.scheduled_at.value?new Date(form.elements.scheduled_at.value).toISOString():null};
+}
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+export function extrasHTML(o={}){return `<label>Fecha y hora de entrega o retiro (opcional)<input name="scheduled_at" type="datetime-local" value="${o.scheduled_at?esc(localDate(o.scheduled_at)):''}"></label><fieldset><legend>Regalos y preparación del despacho</legend><div id="sauceRows">${(o.gift_sauces||[]).map(s=>sauceRow(s)).join('')}</div><button type="button" data-add-sauce class="quiet">Agregar salsa de regalo</button><label>Pares de palitos<input name="chopsticks" type="number" min="0" max="100" step="1" value="${o.chopsticks||0}"></label></fieldset><label>Indicaciones para el repartidor<textarea name="delivery_notes" maxlength="500" placeholder="Ej.: llamar al llegar, departamento, portón">${esc(o.delivery_notes||'')}</textarea></label>`;}
+function localDate(value){const date=new Date(value);date.setMinutes(date.getMinutes()-date.getTimezoneOffset());return date.toISOString().slice(0,16);}
+function sauceRow(s={}){return `<div class="sauce-row"><label>Tipo de salsa<input data-sauce-name maxlength="80" placeholder="Ej.: soya, teriyaki" value="${esc(s.name||'')}"></label><label>Cantidad<input data-sauce-qty type="number" min="1" max="100" step="1" value="${s.quantity||1}"></label><button type="button" data-remove-sauce class="quiet">Quitar</button></div>`;}
+export function bindExtras(form,onChange=()=>{}){function bind(){form.querySelectorAll('[data-remove-sauce]').forEach(b=>b.onclick=()=>{b.closest('.sauce-row').remove();onChange();});}form.querySelector('[data-add-sauce]').onclick=()=>{form.querySelector('#sauceRows').insertAdjacentHTML('beforeend',sauceRow());bind();onChange();};bind();}
