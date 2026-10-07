@@ -1,3 +1,4 @@
+export const isIngredientChangeGroup=group=>/^cambios?\b/i.test(String(group.name||''))&&group.min_select===0;
 // The catalogue is the single source of truth for prices and option limits.
 export function configuredGroups(productId, groups, options) {
   return groups.filter(g => g.product_id === productId && g.active !== false).sort((a, b) => a.sort_order - b.sort_order)
