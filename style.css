@@ -65,3 +65,25 @@ dialog{background:#182427;color:#edf5f3;border-color:#395150;box-shadow:0 22px 9
 
 .delivery-band-fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:12px;align-items:center}.product-builder{max-width:540px}.product-builder .choices{margin:18px 0}@media(max-width:760px){.delivery-band-fields{grid-template-columns:1fr 1fr}.delivery-band-fields button{min-height:44px}}
 .delivery-band-fields label{flex-direction:column;align-items:stretch;min-width:0}.delivery-band-fields input{min-width:0;width:100%}
+
+/* Caja rápida 2026: escritorio primero, sin alterar los formularios ni el cálculo de precios. */
+@media(min-width:1000px){
+ #view:has(#posCategories) .cols{grid-template-columns:minmax(0,1.5fr) minmax(390px,1fr);gap:16px;align-items:start}
+ #view:has(#posCategories) .cols>section:first-child{position:sticky;top:12px;max-height:calc(100dvh - 24px);overflow:auto;overscroll-behavior:contain;padding-right:8px}
+ #view:has(#posCategories) .cols>section.panel{position:static;max-height:none;overflow:visible}
+ #view:has(#posCategories) .products{grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:8px}
+ #view:has(#posCategories) .product{min-height:82px;padding:11px;gap:4px}
+ #view:has(#posCategories) #productSearch{position:sticky;top:0;z-index:3;background:#fff}
+}
+.quick-builder{width:min(920px,96vw);max-width:920px;max-height:92dvh;padding:20px 24px}
+.quick-builder .wizard-head{position:sticky;top:-20px;background:inherit;z-index:3;padding:6px 0 12px}
+.quick-builder .wizard-head h2{margin:0}
+.quick-groups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.quick-group{min-width:0;border:1px solid #d6e3dc;border-radius:12px;padding:10px;margin:0}
+.quick-group legend{font-weight:750;padding:0 5px}.quick-group legend small{display:block;font-weight:500;color:#53706a}
+.quick-group .choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:8px 0}
+.quick-group .choice{min-height:56px;padding:9px;text-align:left;font-size:.88rem;gap:3px}
+.quick-group .quick-clear{font-size:.8rem;min-height:34px;padding:6px 10px}
+.quick-count{color:#53706a}.quick-error{color:#a12626;font-weight:700;min-height:1.3em}
+.quick-builder .wizard-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;bottom:-20px;padding:12px 0;border-top:1px solid #d6e3dc}
+@media(max-width:700px){.quick-groups{grid-template-columns:1fr}.quick-builder{padding:12px}.quick-builder .wizard-head{top:-12px}.quick-builder .wizard-actions{bottom:-12px}.quick-group .choices{grid-template-columns:repeat(2,minmax(0,1fr))}.order-fab{bottom:max(10px,env(safe-area-inset-bottom));right:10px;min-height:46px;padding:8px 12px;font-size:.8rem}}

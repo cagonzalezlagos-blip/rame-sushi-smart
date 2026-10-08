@@ -10,8 +10,14 @@ export function bindProductSearch(input,container){
    for(const product of category.querySelectorAll('[data-add]')){product.hidden=!!term&&!normalize(product.textContent).includes(term);if(!product.hidden)matches++;}
    category.hidden=!!term&&!matches;
    category.open=term?matches>0:previousOpen?.[index]??category.open;
-   container.append(category);
+
   }
   if(!term)previousOpen=null;
+ });
+ input.addEventListener('keydown',event=>{
+  if(event.key!=='Enter')return;
+  const first=container.querySelector('[data-add]:not([hidden]):not([disabled])');
+  if(!first||!normalize(input.value))return;
+  event.preventDefault();first.click();
  });
 }
