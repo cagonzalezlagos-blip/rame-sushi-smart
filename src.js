@@ -189,3 +189,10 @@ if(configured){
 }else app.innerHTML='<main class="login panel"><h1>Gestión gastronómica</h1><p>Configura la URL y la clave publicable de la base de datos para activar esta instalación.</p><p>Consulta el archivo README antes de usarla con clientes.</p></main>';
 
 async function renderRemunerations(){const {renderPayroll}=await import('./payroll-ui.js');if(activePage!=='Remuneraciones')return;await renderPayroll({client:sb,target:$('#view'),profile,isCurrent:()=>activePage==='Remuneraciones'});}
+
+// Atajos exclusivos de Caja. Evitar interferir con campos y diálogos abiertos.
+document.addEventListener('keydown',event=>{
+ if(activePage!=='Caja'||event.altKey||event.ctrlKey||event.metaKey||document.querySelector('dialog[open]'))return;
+ if(event.key==='F3'){event.preventDefault();document.querySelector('#productSearch')?.focus();document.querySelector('#productSearch')?.select();}
+ if(event.key==='F2'){event.preventDefault();startNewOrder();}
+});
