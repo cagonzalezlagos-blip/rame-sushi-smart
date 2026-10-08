@@ -173,3 +173,13 @@ body:has(#productSearch) #drawerNotice:empty{display:none}
 .promo-config #promoGenerate{background:#16877e!important;color:white!important;border-color:#16877e!important;font-weight:700}
 body:has(dialog[open]) .order-fab{display:none!important}
 @media(max-width:760px){.promo-config .catalog-fields{grid-template-columns:1fr}.promo-guide,.promo-config{padding:14px!important}}
+
+/* Rame Sushi V6: administrador de promociones compacto */
+.promo-config{margin:1rem 0;padding:1.2rem;border:1px solid #bcded9;border-radius:16px;background:#f8fdfb}
+.promo-builder-row{display:grid;grid-template-columns:minmax(200px,2fr) minmax(100px,1fr) auto;gap:12px;align-items:end}
+.promo-builder-row label{min-width:0}.promo-builder-row button{margin-bottom:0}
+.promo-line{display:flex;align-items:center;gap:14px;padding:10px 12px;margin:8px 0;border:1px solid #d4e8e5;border-radius:10px;background:#fff}.promo-line strong{flex:1}.promo-line button{padding:8px 12px}
+#promoAdvanced{margin:14px 0;border:1px solid #d4e8e5;border-radius:12px;padding:14px;background:#fff}
+#promoAdvanced summary{font-weight:700;cursor:pointer;color:#126f69}
+#promoAdvanced[open] summary{margin-bottom:14px}
+@media(max-width:700px){.promo-builder-row{grid-template-columns:1fr}.promo-line{flex-wrap:wrap}}
