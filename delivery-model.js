@@ -1,12 +1,28 @@
 export const DEFAULT_DELIVERY_CONFIG=Object.freeze({near_km:3,far_km:5,near_pay:1000,mid_pay:1500,far_pay:2000,near_fee:0,mid_fee:0,far_fee:0});
+export const RAME_DELIVERY_CONFIG=Object.freeze({bands:[3,4,5,6,7,8,9].map((max_km,i)=>({max_km,courier_pay:1000+i*500,customer_fee:1000+i*500}))});
+export function deliveryTiers(c){
+ if(Array.isArray(c?.bands))return c.bands.map(b=>({...b}));
+ return [{max_km:c?.near_km,courier_pay:c?.near_pay,customer_fee:c?.near_fee},{max_km:c?.far_km,courier_pay:c?.mid_pay,customer_fee:c?.mid_fee},{max_km:null,courier_pay:c?.far_pay,customer_fee:c?.far_fee}];
+}
 export function validateDeliveryConfig(c){
- if(!c||!Number.isFinite(c.near_km)||!Number.isFinite(c.far_km)||c.near_km<=0||c.far_km<=c.near_km||c.far_km>100)throw Error('Revisa los límites de kilómetros.');
- for(const key of ['near_pay','mid_pay','far_pay','near_fee','mid_fee','far_fee'])if(!Number.isSafeInteger(c[key])||c[key]<0||c[key]>1000000)throw Error('Los montos deben ser enteros entre $0 y $1.000.000.');return c;
+ const bands=deliveryTiers(c);if(!c||bands.length<1||bands.length>30)throw Error('Configura entre 1 y 30 tramos.');
+ let previous=0;
+ for(const [index,b] of bands.entries()){
+  if(b.max_km===null){if(index!==bands.length-1)throw Error('Solo el último tramo puede quedar sin límite.');}
+  else if(!Number.isFinite(b.max_km)||b.max_km<=previous||b.max_km>100)throw Error('Los límites deben aumentar y no superar 100 km.');
+  for(const key of ['courier_pay','customer_fee'])if(!Number.isSafeInteger(b[key])||b[key]<0||b[key]>1000000)throw Error('Los montos deben ser enteros entre $0 y $1.000.000.');
+  previous=b.max_km;
+ }
+ return c;
 }
 export function deliveryBand(distance,c){
  validateDeliveryConfig(c);if(!Number.isFinite(distance)||distance<0||distance>100000)throw Error('Distancia inválida.');
- const tier=distance<c.near_km*1000?'near':distance<c.far_km*1000?'mid':'far';
- return {courier_pay:c[tier+'_pay'],customer_fee:c[tier+'_fee'],band_label:tier==='near'?`Menos de ${c.near_km} km`:tier==='mid'?`${c.near_km} a menos de ${c.far_km} km`:`${c.far_km} km o más`};
+ const bands=deliveryTiers(c);let from=0;
+ for(const [i,b] of bands.entries()){
+  if(b.max_km===null||distance<b.max_km*1000||(i===bands.length-1&&distance===b.max_km*1000))return {courier_pay:b.courier_pay,customer_fee:b.customer_fee,band_label:b.max_km===null?`${from} km o más`:`${from} a ${b.max_km} km`};
+  from=b.max_km;
+ }
+ const error=Error('La distancia supera los tramos configurados. Ingresa una tarifa manual.');error.code='DELIVERY_OUTSIDE_BANDS';throw error;
 }
 export function validPoint(p){return p&&Number.isFinite(p.lat)&&Number.isFinite(p.lng)&&Math.abs(p.lat)<=90&&Math.abs(p.lng)<=180;}
 export function pointFromText(text){

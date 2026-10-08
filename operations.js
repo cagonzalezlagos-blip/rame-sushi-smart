@@ -25,13 +25,13 @@ export function payrollEstimate(entry){
 export function financeSummary(orders=[],movements=[],suppliers=[]){
   const channels=Object.fromEntries(Object.keys(CHANNELS).map(key=>[key,{count:0,total:0}]));
   const methods=Object.fromEntries(Object.keys(PAYMENT_NAMES).map(key=>[key,0]));
-  const byId=new Map(orders.map(order=>[order.id,order]));
+  const byId=new Map(orders.map(order=>[order.id,order])),counted=new Set();
   let sales=0,movementIncome=0,otherExpense=0;
   for(const movement of movements){
     const amount=Math.abs(Number(movement.amount||0));
     if(movement.kind==='income'&&movement.order_id){
       const order=byId.get(movement.order_id),channel=channels[order?.source_channel]||channels.counter;
-      channel.count++;channel.total+=amount;sales+=amount;
+      if(!counted.has(movement.order_id)){channel.count++;counted.add(movement.order_id);}channel.total+=amount;sales+=amount;
       if(methods[movement.method]!==undefined)methods[movement.method]+=amount;
     }else if(movement.kind==='income')movementIncome+=amount;
     else if(movement.kind==='expense'&&!movement.supplier_payment_id)otherExpense+=amount;
