@@ -154,3 +154,13 @@ a{color:#126e66!important}
 #view:has(#posCategories) #productSearch{background:#fff!important;color:#17383a!important;border:2px solid #16877e!important}
 #view:has(#posCategories) #productSearch:focus{outline:3px solid #d4a33260!important}
 @media(max-width:760px){#app>nav#mainMenu{box-shadow:0 12px 25px #17383a22!important}}
+
+/* V4: refinamientos de caja blanca */
+body:has(#productSearch) #view>h1{margin-bottom:8px}
+body:has(#productSearch) #view>.actions{margin-bottom:8px}
+body:has(#productSearch) #drawerNotice:empty{display:none}
+.product-builder .choice.chosen{position:relative;padding-right:38px}
+.product-builder .choice.chosen::after{content:'✓';position:absolute;right:12px;top:12px;font-size:20px;font-weight:900;color:#087e78}
+.product-builder .wizard-head{margin-bottom:6px}
+.product-builder .quick-groups{gap:12px}
+@media(min-width:1000px){.product-builder.quick-builder{max-height:91vh}.product-builder.quick-builder .quick-group .choices{gap:6px}}
