@@ -183,3 +183,14 @@ body:has(dialog[open]) .order-fab{display:none!important}
 #promoAdvanced summary{font-weight:700;cursor:pointer;color:#126f69}
 #promoAdvanced[open] summary{margin-bottom:14px}
 @media(max-width:700px){.promo-builder-row{grid-template-columns:1fr}.promo-line{flex-wrap:wrap}}
+
+/* V7: selección de promociones por handroll */
+.roll-tabs{display:flex;gap:8px;flex-wrap:wrap;position:sticky;top:65px;background:#fff;z-index:3;padding:10px 0;border-bottom:1px solid #d5e7e1}
+.roll-tab{flex:1;min-width:100px;font-weight:700!important}.roll-tab.selected{background:#16877e!important;color:#fff!important;border-color:#16877e!important}
+.roll-current{font-size:1.1rem;font-weight:750;margin:12px 0;color:#17383a}
+.promo-quick-groups{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.promo-quick-groups [hidden]{display:none!important}
+.promo-quick-groups .quick-group{min-width:0}.promo-quick-groups .choice span{overflow-wrap:anywhere}
+.quick-builder .wizard-actions button[hidden]{display:none!important}
+@media(max-width:1000px){.promo-quick-groups{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.promo-quick-groups{grid-template-columns:1fr}.roll-tabs{top:48px}.roll-tab{min-width:0;font-size:.85rem}}
