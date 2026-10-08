@@ -87,3 +87,70 @@ dialog{background:#182427;color:#edf5f3;border-color:#395150;box-shadow:0 22px 9
 .quick-count{color:#53706a}.quick-error{color:#a12626;font-weight:700;min-height:1.3em}
 .quick-builder .wizard-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;bottom:-20px;padding:12px 0;border-top:1px solid #d6e3dc}
 @media(max-width:700px){.quick-groups{grid-template-columns:1fr}.quick-builder{padding:12px}.quick-builder .wizard-head{top:-12px}.quick-builder .wizard-actions{bottom:-12px}.quick-group .choices{grid-template-columns:repeat(2,minmax(0,1fr))}.order-fab{bottom:max(10px,env(safe-area-inset-bottom));right:10px;min-height:46px;padding:8px 12px;font-size:.8rem}}
+
+/* Caja rápida — refinamiento visual v2 (solo presentación, sin alterar ventas). */
+#view:has(#posCategories) > h1{font-size:clamp(1.55rem,2.2vw,2rem);line-height:1.2;margin:8px 0 12px}
+#view:has(#posCategories) > .actions{margin:0 0 12px;gap:8px}
+#view:has(#posCategories) > .actions button{padding:9px 13px;min-height:40px;font-size:.88rem}
+#view:has(#posCategories) #drawerNotice:empty{display:none}
+#view:has(#posCategories) #productSearch{background:#f8fcfb;color:#142b2b;caret-color:#142b2b;border:2px solid #60bdb5}
+#view:has(#posCategories) #productSearch::placeholder{color:#566e6c;opacity:1}
+#view:has(#posCategories) #productSearch:focus{outline:3px solid #f1c967;outline-offset:1px}
+#app:has(#posCategories) .order-fab{display:none}
+#app:has(#posCategories)>main#view{padding-bottom:24px}
+@media(min-width:1000px){
+ #view:has(#posCategories) .cols{grid-template-columns:minmax(0,1.45fr) minmax(390px,1fr);gap:14px}
+ #view:has(#posCategories) .cols>section:first-child{top:8px;max-height:calc(100dvh - 16px)}
+ #view:has(#posCategories) .cols>section.panel{padding:18px}
+ #view:has(#posCategories) .cols>section.panel>h2{font-size:1.35rem;margin:0 0 8px}
+ #view:has(#posCategories) .cols>section.panel>p.muted{font-size:.86rem;margin:0 0 12px}
+}
+.quick-builder{width:min(980px,96vw);max-width:980px;max-height:88dvh;padding:12px 18px}
+.quick-builder .wizard-head{top:-12px;padding:2px 0 8px}
+.quick-builder .wizard-head h2{font-size:1.45rem}
+.quick-builder .quick-groups{gap:10px}
+.quick-builder .quick-group{padding:8px}
+.quick-builder .quick-group .choices{gap:5px;margin:6px 0}
+.quick-builder .quick-group .choice{min-height:48px;padding:7px 9px;font-size:.85rem}
+.quick-builder .wizard-actions{bottom:-12px;padding:8px 0}
+@media(max-width:700px){.quick-builder{width:98vw;max-height:94dvh;padding:10px}.quick-builder .wizard-head{top:-10px}.quick-builder .wizard-actions{bottom:-10px}}
+
+
+/* RAME SUSHI · Tema blanco de prueba V3 — sin cambios de lógica */
+:root{background:#fff!important;color:#17383a!important;--border:#dbe8e5!important;--muted:#536e6e!important;--accent:#16877e;--accent-ink:#fff;color-scheme:light}
+html,body{background:#fff!important;color:#17383a!important;color-scheme:light}
+#app{background:#fff!important;color:#17383a!important}
+header{background:#fff!important;color:#17383a!important;border-bottom:2px solid #169b8d!important;box-shadow:0 2px 12px #133b3910!important}
+header strong,header .session-user{color:#17383a!important}
+header small{color:#526b6a!important}
+#app>main#view{background:#fff!important;color:#17383a!important}
+#app>nav,#app>nav#mainMenu{background:#fff!important;border-right:1px solid #dbe8e5!important;color:#17383a!important}
+#app>nav button,#app>nav#mainMenu button{background:transparent!important;color:#23494a!important}
+#app>nav button:hover,#app>nav#mainMenu button:hover{background:#eaf7f3!important;color:#145b56!important}
+#app>nav button.selected,#app>nav#mainMenu button.selected{background:#d9f2eb!important;color:#145b56!important;box-shadow:inset 4px 0 #d4a332!important}
+.panel,details,.metric,.order-lane article,.cash-card,.catalog-group{background:#fff!important;color:#17383a!important;border-color:#dbe8e5!important;box-shadow:0 3px 14px #133b3909!important}
+dialog,.quick-builder,.product-builder,.catalog-dialog{background:#fff!important;color:#17383a!important;border:1px solid #a8d4cb!important;box-shadow:0 18px 65px #102a2a35!important;color-scheme:light}
+.quick-builder .wizard-head,.quick-builder .wizard-actions,.wizard-actions{background:#fff!important;color:#17383a!important}
+.quick-group,fieldset{background:#fff!important;color:#17383a!important;border-color:#d5e7e1!important}
+label,legend,summary,h1,h2,h3,h4,p,.line,.cart-item{color:#17383a!important}
+.muted,.line small,.cart-item small,.quick-count,.quick-group legend small{color:#536e6e!important}
+input,select,textarea,#productSearch{background:#fff!important;color:#17383a!important;border:1px solid #9fbdb7!important;color-scheme:light!important;caret-color:#17383a!important}
+input::placeholder,textarea::placeholder,#productSearch::placeholder{color:#667d7b!important;opacity:1!important}
+input:focus,select:focus,textarea:focus{border-color:#16877e!important;outline:3px solid #16877e30!important}
+button{background:#16877e;color:#fff}
+button:hover{filter:brightness(.96)}
+button.quiet,button.secondary,.quiet,.secondary{background:#edf7f4!important;color:#175e59!important;border:1px solid #bcdad3!important}
+button.selected,.choice.chosen{background:#d9f2eb!important;color:#124e49!important;border-color:#c99a28!important}
+.product,.choice,.quick-group .choice{background:#f3faf7!important;color:#17383a!important;border:1px solid #cde2db!important}
+.product:hover,.choice:hover,.quick-group .choice:hover{background:#e4f4ed!important;border-color:#16877e!important}
+.product span,.choice b,.quick-group .choice b{color:#8c6310!important}
+.product small,.demo-product small{color:#536e6e!important}
+.choice.chosen,.quick-group .choice.chosen{background:#d9f2eb!important;border:2px solid #bd9024!important;color:#17383a!important}
+.tag{background:#e8f5ef!important;color:#175e59!important}
+.cart-item,.line{border-color:#dbe8e5!important}
+a{color:#126e66!important}
+.progress{background:#e2efeb!important}.progress span{background:#d4a332!important}
+.quick-error,.catalog-error{color:#a52323!important}
+#view:has(#posCategories) #productSearch{background:#fff!important;color:#17383a!important;border:2px solid #16877e!important}
+#view:has(#posCategories) #productSearch:focus{outline:3px solid #d4a33260!important}
+@media(max-width:760px){#app>nav#mainMenu{box-shadow:0 12px 25px #17383a22!important}}
