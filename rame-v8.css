@@ -1,0 +1,25 @@
+/* Rame Sushi V8: caja concentrada y tablero de pedidos. */
+#view .v8-pos-layout{display:block!important;max-width:1100px;margin:0 auto}
+#view .v8-pos-layout>section.panel{width:100%;max-width:none!important;position:static!important;padding:18px!important}
+.v8-quick-catalog{padding:14px;margin:0 0 16px;border:1px solid #b8ded4;border-radius:14px;background:#f7fcfa;color:#17383a}
+.v8-quick-catalog h2{margin:0 0 6px;font-size:1.25rem}.v8-muted{color:#52706a!important;font-size:.85rem;margin:6px 0 10px}
+.v8-quick-catalog #productSearch{display:block;width:100%;min-height:54px;font-size:1.1rem;margin:10px 0;background:white!important}
+.v8-shortcuts{display:flex;gap:7px;flex-wrap:wrap}.v8-shortcuts button{padding:8px 12px;background:#e8f5f0!important;color:#175c56!important;border:1px solid #badbd1!important;border-radius:999px}
+.v8-categories{max-height:320px;overflow:auto;margin:10px 0 0;border-top:1px solid #d3e7e1;padding-top:8px}
+.v8-categories details{margin:6px 0;padding:8px}.v8-categories .products{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:8px}
+.v8-categories .product{min-height:64px;padding:10px;text-align:left}
+.v8-quick-catalog:not(.v8-searching) .v8-categories{max-height:230px}
+.v8-order-controls{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:#f7fcfa;border:1px solid #cbe4dc;padding:12px;border-radius:12px;margin:12px 0}
+.v8-order-tabs{display:flex;gap:7px;flex-wrap:wrap}.v8-order-tabs button{background:#e7f4ef!important;color:#185d57!important;border:1px solid #b7d8cf!important}
+.v8-order-tabs button.v8-selected{background:#16877e!important;color:white!important}
+.v8-order-controls label{display:flex;align-items:center;gap:8px;margin:0}.v8-order-controls select{min-width:155px}.v8-order-controls p{flex-basis:100%;margin:0}
+#view .v8-orders-board{display:block!important}#view .v8-orders-board .order-lane[hidden]{display:none!important}
+#view .v8-orders-board .order-lane{width:100%}#view .v8-orders-board .order-lane article{margin:9px 0;padding:12px 16px}
+.v8-order-card>h2{font-size:1.03rem;cursor:pointer;margin:0;padding:6px 24px 6px 0;position:relative;line-height:1.5}
+.v8-order-card>h2:after{content:'⌄';position:absolute;right:0;top:5px;font-size:1.4rem;color:#16877e}
+.v8-order-card>h2[aria-expanded=true]:after{content:'⌃'}
+.v8-order-card>h2:focus-visible{outline:2px solid #16877e;outline-offset:3px}
+.v8-order-card .v8-order-detail{border-top:1px solid #dcece6;margin-top:10px;padding-top:10px}
+.v8-order-card .v8-order-detail[hidden],.v8-order-card[hidden]{display:none!important}
+#orderFilters label:has([name=dateFrom]),#orderFilters label:has([name=dateTo]){min-width:150px}
+@media(max-width:700px){.v8-order-controls{display:block}.v8-order-controls label{margin-top:10px}.v8-categories .products{grid-template-columns:repeat(2,minmax(0,1fr))}.v8-quick-catalog{padding:10px}}
