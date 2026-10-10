@@ -1,7 +1,7 @@
 export const isIngredientChangeGroup=group=>/^cambios?\b/i.test(String(group.name||''))&&group.min_select===0;
 const norm=v=>String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
 const isChange=g=>/cambio/i.test(g.name||'');
-const isPromo=p=>/tabla|promoci[oó]n|promo/i.test(p.name||'');
+const isPromo=p=>/tabla|promoci[oó]n|promo|^\d+\s*(?:hot|rame)/i.test(p.name||'');
 const wrap=g=>/envoltura|cobertura/i.test(g.name||'');
 const fill=g=>/relleno|prote[ií]na/i.test(g.name||'');
 const tariffs={palta:1500,queso:1500,salmon:2000,panko:1300,'jamon serrano':1300,sesamo:1300,nori:1300};
